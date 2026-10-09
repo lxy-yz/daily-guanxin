@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>每日观心</title>
+    <meta
+      name="description"
+      content="每日观心：见念、知念、转念、不住念。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="card today-card" aria-labelledby="page-title">
+        <header class="topbar">
+          <div>
+            <h1 id="page-title">今日观心</h1>
+            <input id="date-input" type="date" aria-label="选择日期" />
+          </div>
+          <nav class="top-actions" aria-label="页面导航">
+            <a class="chip-link" href="./review.html">回顾</a>
+          </nav>
+        </header>
+
+        <section class="counters" aria-label="今日念头计数">
+          <article class="counter">
+            <strong id="count-good">0</strong>
+            <span>善念</span>
+          </article>
+          <article class="counter">
+            <strong id="count-unwholesome">0</strong>
+            <span>恶念</span>
+          </article>
+          <article class="counter">
+            <strong id="count-aware">0</strong>
+            <span>觉察转念</span>
+          </article>
+          <article class="counter">
+            <strong id="count-unclear">0</strong>
+            <span>未明</span>
+          </article>
+        </section>
+
+        <section class="seed-bank" aria-label="念头点阵">
+          <h2>念头点阵</h2>
+          <div class="dot-row" id="dot-row"></div>
+        </section>
+
+        <section class="mark-section" aria-label="记录一念">
+          <h2>此刻觉察到什么？</h2>
+          <div class="mark-buttons">
+            <button class="mark-button good" data-kind="善" type="button">
+              <span>＋</span>善念
+            </button>
+            <button class="mark-button unwholesome" data-kind="恶" type="button">
+              <span>＋</span>恶念
+            </button>
+            <button class="mark-button aware" data-kind="觉" type="button">
+              <span>＋</span>觉察 / 转念
+            </button>
+            <button class="mark-button unclear" data-kind="未明" type="button">
+              <span>＋</span>未明
+            </button>
+          </div>
+          <details class="note-drawer">
+            <summary>添加念头备注（可选）</summary>
+            <textarea
+              id="pending-note"
+              rows="3"
+              placeholder="记录一点缘起。下一次点选时会一并保存。"
+            ></textarea>
+          </details>
+        </section>
+
+        <section class="ledger-panel" aria-labelledby="ledger-title">
+          <div class="section-heading">
+            <h2 id="ledger-title">观心流水</h2>
+            <div class="ledger-meta">
+              <span id="entry-count">0 条记录</span>
+              <button class="filter-toggle" id="filter-aware" type="button">
+                只看转念
+              </button>
+            </div>
+          </div>
+          <ol class="ledger" id="ledger"></ol>
+          <p class="empty-state" id="empty-ledger">
+            还没有记录。先轻轻点下一念，不必解释。
+          </p>
+          <footer class="ledger-actions">
+            <button class="soft-button" id="copy-today" type="button">
+              复制今日记录
+            </button>
+            <button class="soft-button clear" id="clear-day" type="button">
+              清空
+            </button>
+          </footer>
+        </section>
+      </section>
+
+      <section class="daily-lesson">
+        <h2>每日晚课 · 三省</h2>
+        <section class="card reflection-card" aria-labelledby="reflection-title">
+          <p class="quote-line">曾子曰：<span id="daily-quote"></span></p>
+          <h3 id="reflection-title">1. 今天最值得随喜的一念是什么？</h3>
+          <textarea id="rejoice" rows="3" placeholder="写一句话即可......"></textarea>
+
+          <h3>2. 今天哪个念头让我失去了自在？</h3>
+          <textarea id="bondage" rows="3" placeholder="写一句话即可......"></textarea>
+
+          <h3>3. 有没有哪一刻，看见念头而没有跟着走？</h3>
+          <textarea id="witness" rows="3" placeholder="写一句话即可......"></textarea>
+
+          <button class="copy-full" id="copy-full" type="button">
+            复制完整日记
+          </button>
+          <span class="save-state" id="save-state">已保存</span>
+        </section>
+      </section>
+    </main>
+
+    <template id="entry-template">
+      <li class="entry">
+        <span class="entry-dot"></span>
+        <strong class="entry-kind"></strong>
+        <p class="entry-note"></p>
+        <time></time>
+        <button class="delete-entry" type="button" aria-label="删除记录">×</button>
+      </li>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

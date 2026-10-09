@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>回顾 · 每日观心</title>
+    <meta name="description" content="回看每日观心记录，照见反复起处。" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell review-shell">
+      <section class="card review-hero" aria-labelledby="review-title">
+        <header class="topbar">
+          <div>
+            <h1 id="review-title">回顾</h1>
+            <p class="subtle">照见反复起处，不作成绩评判。</p>
+          </div>
+          <nav class="top-actions" aria-label="页面导航">
+            <a class="chip-link" href="./index.html">今日</a>
+          </nav>
+        </header>
+
+        <section class="range-tabs" aria-label="回顾范围">
+          <button class="range-tab active" data-days="7" type="button">七日</button>
+          <button class="range-tab" data-days="30" type="button">三十日</button>
+          <button class="range-tab" data-days="3650" type="button">全部</button>
+        </section>
+
+        <section class="review-summary" aria-label="回顾汇总">
+          <article>
+            <strong id="summary-days">0</strong>
+            <span>有记录天数</span>
+          </article>
+          <article>
+            <strong id="summary-total">0</strong>
+            <span>念头记录</span>
+          </article>
+          <article>
+            <strong id="summary-aware">0</strong>
+            <span>觉察转念</span>
+          </article>
+          <article>
+            <strong id="summary-ratio">0%</strong>
+            <span>转念占比</span>
+          </article>
+        </section>
+      </section>
+
+      <section class="card trend-card" aria-labelledby="trend-title">
+        <div class="section-heading">
+          <h2 id="trend-title">念头分布</h2>
+          <span class="muted-text" id="range-label">最近 7 天</span>
+        </div>
+        <div class="distribution" id="distribution">
+          <div class="donut-chart" id="donut-chart" aria-label="念头分布饼图">
+            <svg
+              class="donut-svg"
+              id="donut-svg"
+              viewBox="0 0 100 100"
+              role="img"
+              aria-label="念头分布"
+            ></svg>
+            <div class="donut-hole">
+              <strong id="donut-total">0</strong>
+              <span>总念头</span>
+            </div>
+          </div>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </section>
+
+      <section class="card trend-card" aria-labelledby="change-title">
+        <div class="section-heading">
+          <h2 id="change-title">变化趋势</h2>
+          <span class="muted-text">每日堆叠</span>
+        </div>
+        <div class="stacked-trend" id="stacked-trend"></div>
+        <p class="trend-note" id="trend-note"></p>
+      </section>
+
+      <section class="card review-list-card" aria-labelledby="days-title">
+        <div class="section-heading">
+          <h2 id="days-title">每日省察</h2>
+          <button class="soft-button" id="copy-review" type="button">
+            复制回顾
+          </button>
+        </div>
+        <div class="review-days" id="review-days"></div>
+        <p class="empty-state" id="empty-review">
+          还没有可回顾的记录。先从今日观心开始。
+        </p>
+      </section>
+    </main>
+
+    <script src="./review.js"></script>
+  </body>
+</html>
