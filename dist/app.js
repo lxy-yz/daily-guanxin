@@ -22,6 +22,8 @@ const state = {
   records: loadRecords(),
   selectedDate: toDateKey(new Date()),
   awareOnly: false,
+  lastSavedAt: null,
+  saveStatusTimer: null,
 };
 
 const els = {
@@ -55,8 +57,44 @@ function loadRecords() {
 }
 
 function saveRecords() {
+  showSavingState();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.records));
-  els.saveState.textContent = "已保存";
+  state.lastSavedAt = new Date();
+  updateSavedState();
+  scheduleSavedStateRefresh();
+}
+
+function showSavingState() {
+  els.saveState.textContent = "保存中...";
+}
+
+function updateSavedState() {
+  if (!state.lastSavedAt) {
+    els.saveState.textContent = "尚未保存";
+    return;
+  }
+
+  els.saveState.textContent = `已保存 · ${formatSavedTime(state.lastSavedAt)}`;
+}
+
+function formatSavedTime(savedAt) {
+  const diffSeconds = Math.max(0, Math.floor((Date.now() - savedAt.getTime()) / 1000));
+  if (diffSeconds < 10) return "刚刚";
+  if (diffSeconds < 60) return `${diffSeconds} 秒前`;
+  if (diffSeconds < 3600) return `${Math.floor(diffSeconds / 60)} 分钟前`;
+  return new Intl.DateTimeFormat("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(savedAt);
+}
+
+function scheduleSavedStateRefresh() {
+  window.clearTimeout(state.saveStatusTimer);
+  state.saveStatusTimer = window.setTimeout(() => {
+    updateSavedState();
+    scheduleSavedStateRefresh();
+  }, 10000);
 }
 
 function toDateKey(date) {
@@ -118,7 +156,6 @@ function deleteEntry(id) {
 
 function updateReflection(key, value) {
   getRecord().reflection[key] = value;
-  els.saveState.textContent = "保存中";
   saveRecords();
 }
 
