@@ -695,8 +695,30 @@ h3 {
 }
 
 .donut-svg path:hover,
-.donut-svg path:focus {
+.donut-svg path:focus,
+.chart-selected {
   opacity: 0.82;
+}
+
+.donut-svg path,
+.stack-segment {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.chart-tooltip {
+  position: fixed;
+  z-index: 100;
+  max-width: calc(100vw - 16px);
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #262923;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  pointer-events: none;
 }
 
 .donut-hole {

@@ -30,6 +30,61 @@ const els = {
   copyReview: document.querySelector("#copy-review"),
 };
 
+const chartTooltip = document.createElement("div");
+chartTooltip.id = "chart-tooltip";
+chartTooltip.className = "chart-tooltip";
+chartTooltip.setAttribute("role", "tooltip");
+chartTooltip.hidden = true;
+document.body.append(chartTooltip);
+let tooltipTarget = null;
+
+function hideChartTooltip() {
+  tooltipTarget?.removeAttribute("aria-describedby");
+  tooltipTarget?.classList.remove("chart-selected");
+  tooltipTarget = null;
+  chartTooltip.hidden = true;
+}
+
+function bindChartTooltip(element, text) {
+  element.setAttribute("aria-label", text);
+  const show = () => {
+    hideChartTooltip();
+    tooltipTarget = element;
+    element.classList.add("chart-selected");
+    element.setAttribute("aria-describedby", chartTooltip.id);
+    chartTooltip.textContent = text;
+    chartTooltip.hidden = false;
+    const target = element.getBoundingClientRect();
+    const tip = chartTooltip.getBoundingClientRect();
+    const left = Math.max(8, Math.min(target.left + target.width / 2 - tip.width / 2, window.innerWidth - tip.width - 8));
+    const top = target.top >= tip.height + 16
+      ? target.top - tip.height - 8
+      : Math.min(target.bottom + 8, window.innerHeight - tip.height - 8);
+    chartTooltip.style.left = `${left}px`;
+    chartTooltip.style.top = `${Math.max(8, top)}px`;
+  };
+  element.addEventListener("click", show);
+  element.addEventListener("focus", show);
+  element.addEventListener("blur", () => {
+    if (tooltipTarget === element) hideChartTooltip();
+  });
+  element.addEventListener("pointerenter", (event) => {
+    if (event.pointerType === "mouse") show();
+  });
+  element.addEventListener("pointerleave", (event) => {
+    if (event.pointerType === "mouse" && tooltipTarget === element) hideChartTooltip();
+  });
+}
+
+document.addEventListener("pointerdown", (event) => {
+  if (tooltipTarget && !tooltipTarget.contains(event.target)) hideChartTooltip();
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") hideChartTooltip();
+});
+document.addEventListener("scroll", hideChartTooltip, true);
+window.addEventListener("resize", hideChartTooltip);
+
 function loadRecords() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -146,10 +201,8 @@ function renderDistribution(counts) {
         fill: colors[kind],
         tabindex: 0,
       });
-      const title = createSvgElement("title");
       const ratio = Math.round((value / total) * 100);
-      title.textContent = `${config.label}：${value}，占 ${ratio}%`;
-      segment.append(title);
+      bindChartTooltip(segment, `${config.label}：${value}，占 ${ratio}%`);
       els.donutSvg.append(segment);
       cursor = end;
     });
@@ -230,7 +283,6 @@ function renderStackedTrend() {
     const total = record.entries.length;
     const day = document.createElement("article");
     day.className = "trend-day";
-    day.title = `${dateKey}｜善 ${counts["善"]} 恶 ${counts["恶"]} 觉 ${counts["觉"]} 未明 ${counts["未明"]}`;
 
     const bar = document.createElement("div");
     bar.className = "stacked-bar";
@@ -242,8 +294,7 @@ function renderStackedTrend() {
       segment.className = `stack-segment ${colorClassByKind[kind]}`;
       segment.style.flexGrow = counts[kind];
       segment.tabIndex = 0;
-      segment.title = `${dateKey}｜${kinds[kind].label}：${counts[kind]}，占 ${Math.round((counts[kind] / total) * 100)}%`;
-      segment.setAttribute("aria-label", segment.title);
+      bindChartTooltip(segment, `${dateKey}｜${kinds[kind].label}：${counts[kind]}，占 ${Math.round((counts[kind] / total) * 100)}%`);
       bar.append(segment);
     });
 
@@ -365,6 +416,7 @@ function showToast(message) {
 }
 
 function render() {
+  hideChartTooltip();
   state.records = loadRecords();
   const records = getRangeRecords();
   const counts = getCounts(records);
