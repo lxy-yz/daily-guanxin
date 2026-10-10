@@ -58,10 +58,19 @@ function loadRecords() {
 
 function saveRecords() {
   showSavingState();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.records));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.records));
+  } catch {
+    window.clearTimeout(state.saveStatusTimer);
+    state.lastSavedAt = null;
+    els.saveState.textContent = "未保存 · 浏览器无法保存记录";
+    showToast("暂未保存，请先复制日记备份");
+    return false;
+  }
   state.lastSavedAt = new Date();
   updateSavedState();
   scheduleSavedStateRefresh();
+  return true;
 }
 
 function showSavingState() {
@@ -133,18 +142,31 @@ function getQuote(dateKey) {
   return quotes[sum % quotes.length];
 }
 
+function createEntryId() {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+  // IDs identify local entries; they are not authentication tokens.
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+}
+
 function addEntry(kind) {
   const note = els.pendingNote.value.trim();
   const record = getRecord();
   record.entries.unshift({
-    id: crypto.randomUUID(),
+    id: createEntryId(),
     kind,
     time: formatTime(new Date()),
     note,
   });
   els.pendingNote.value = "";
-  saveRecords();
+  const saved = saveRecords();
   render();
+  if (saved) {
+    showToast(state.awareOnly && kind !== "觉"
+      ? `${kinds[kind].label}已记录 · 当前只看转念`
+      : `已记录${kinds[kind].label}`);
+  }
 }
 
 function deleteEntry(id) {
